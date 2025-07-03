@@ -17,6 +17,11 @@ const (
 
 	BurstStrategy       = "burst"
 	LeakyBucketStrategy = "leakybucket"
+
+	WebSocketTransport    = "websocket"
+	UniversalTcpTransport = "universaltcp"
+	RawSocketTransport    = "rawsocket"
+	UnixSocketTransport   = "unixsocket"
 )
 
 var URIRegex = regexp.MustCompile(`^([^\s.#]+\.)*([^\s.#]+)$`)
@@ -66,8 +71,14 @@ func validateSerializers(serializers []string) error {
 }
 
 func validateTransport(transport Transport) error {
-	if transport.Type != "websocket" {
-		return fmt.Errorf("type is required and must be 'websocket'")
+	switch transport.Type {
+	case WebSocketTransport, UniversalTcpTransport, RawSocketTransport:
+	case UnixSocketTransport:
+		if err := validateNonEmptyNoSpaceString(transport.Path, "path"); err != nil {
+			return fmt.Errorf("invalid unix socket path: %w", err)
+		}
+	default:
+		return fmt.Errorf("invalid transport type: %s", transport.Type)
 	}
 
 	if err := validateSerializers(transport.Serializers); err != nil {

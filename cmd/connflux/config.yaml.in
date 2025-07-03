@@ -16,6 +16,41 @@ transports:
       interval: 1
       strategy: burst
 
+  - type: rawsocket
+    port: 8081
+    host: localhost
+    serializers:
+      - json
+      - cbor
+      - msgpack
+    ratelimit:
+      rate: 100
+      interval: 1
+      strategy: leakybucket
+
+  - type: universaltcp
+    port: 8082
+    host: localhost
+    serializers:
+      - json
+      - cbor
+      - msgpack
+    ratelimit:
+      rate: 100
+      interval: 1
+      strategy: burst
+
+  - type: unixsocket
+    path: /tmp/xconn.sock
+    serializers:
+      - json
+      - cbor
+      - msgpack
+    ratelimit:
+      rate: 100
+      interval: 1
+      strategy: burst
+
 authenticators:
   cryptosign:
     - authid: john
