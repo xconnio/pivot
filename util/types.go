@@ -8,6 +8,7 @@ type Transport struct {
 	Type        string    `yaml:"type"`
 	Host        string    `yaml:"host"`
 	Port        int       `yaml:"port"`
+	Path        string    `yaml:"path"`
 	Serializers []string  `yaml:"serializers"`
 	RateLimit   RateLimit `yaml:"ratelimit"`
 }

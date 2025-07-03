@@ -58,9 +58,28 @@ func StartServerFromConfigFile(configFile string) ([]io.Closer, error) {
 			}
 		}
 
-		closer, err := server.StartWebSocket(transport.Host, transport.Port)
-		if err != nil {
-			return nil, err
+		var closer io.Closer
+		switch transport.Type {
+		case WebSocketTransport:
+			closer, err = server.StartWebSocket(transport.Host, transport.Port)
+			if err != nil {
+				return nil, err
+			}
+		case UniversalTcpTransport:
+			closer, err = server.StartUniversalTCP(transport.Host, transport.Port)
+			if err != nil {
+				return nil, err
+			}
+		case RawSocketTransport:
+			closer, err = server.StartRawSocket(transport.Host, transport.Port)
+			if err != nil {
+				return nil, err
+			}
+		case UnixSocketTransport:
+			closer, err = server.StartUnixSocket(transport.Path)
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		closers = append(closers, closer)
